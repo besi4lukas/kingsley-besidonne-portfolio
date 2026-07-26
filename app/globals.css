@@ -1,26 +1,137 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ── Backgrounds ─────────────────────────────────── */
+  --color-hero-bg:  #0A0A0F;   /* Near-black cinematic canvas     */
+  --color-grid-bg:  #0F172A;   /* Deep navy – separates sections  */
+  --color-surface:  #1E293B;   /* Elevated card backgrounds       */
+  --color-card:     #1E293B;
+
+  /* Legacy alias so existing components keep working */
+  --color-base:     #0A0A0F;
+
+  /* ── Accents ─────────────────────────────────────── */
+  --color-accent:   #6366F1;   /* Primary  – Indigo  (CTAs, links) */
+  --color-accent2:  #22D3EE;   /* Secondary– Cyan   (tags, status) */
+  --color-success:  #10B981;   /* Emerald  (email-sent confirm)    */
+
+  /* ── Text ────────────────────────────────────────── */
+  --color-text:     #F8FAFC;
+  --color-muted:    #94A3B8;
+
+  /* ── Fonts ───────────────────────────────────────── */
+  --font-heading: "Inter", sans-serif;
+  --font-body:    "Inter", sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ─────────────────────────────────────────────────────
+   Base
+───────────────────────────────────────────────────── */
+@layer base {
+  html { scroll-behavior: smooth; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background: var(--color-hero-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ─────────────────────────────────────────────────────
+   Custom Utilities
+───────────────────────────────────────────────────── */
+@layer utilities {
+  .bg-hero-bg  { background-color: var(--color-hero-bg);  }
+  .bg-grid-bg  { background-color: var(--color-grid-bg);  }
+  .bg-surface  { background-color: var(--color-surface);  }
+  .bg-card     { background-color: var(--color-card);     }
+  .bg-base     { background-color: var(--color-base);     }
+  .bg-accent   { background-color: var(--color-accent);   }
+  .bg-accent2  { background-color: var(--color-accent2);  }
+  .bg-success  { background-color: var(--color-success);  }
+
+  .text-text    { color: var(--color-text);    }
+  .text-muted   { color: var(--color-muted);   }
+  .text-accent  { color: var(--color-accent);  }
+  .text-accent2 { color: var(--color-accent2); }
+  .text-success { color: var(--color-success); }
+
+  .border-accent  { border-color: var(--color-accent);  }
+  .border-accent2 { border-color: var(--color-accent2); }
+  .border-surface { border-color: var(--color-surface); }
+
+  .font-heading { font-family: var(--font-heading); }
+  .font-body    { font-family: var(--font-body);    }
+
+  /* Tailwind shadow colour helpers */
+  .shadow-accent\/20  { --tw-shadow-color: rgba(99,102,241,0.20); }
+  .shadow-accent\/30  { --tw-shadow-color: rgba(99,102,241,0.30); }
+  .shadow-cyan-500\/20 { --tw-shadow-color: rgba(34,211,238,0.20); }
+  .shadow-cyan-500\/30 { --tw-shadow-color: rgba(34,211,238,0.30); }
 }
+
+/* ─────────────────────────────────────────────────────
+   Animations
+───────────────────────────────────────────────────── */
+
+/* Bounce arrow – scroll prompt */
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0);  }
+  50%       { transform: translateY(6px); }
+}
+.animate-bounce-down { animation: bounceDown 1.5s ease-in-out infinite; }
+
+/* Fade-up on mount (hero text) */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.animate-fade-up { animation: fadeUp 0.8s ease-out forwards; }
+
+/* Delayed fade-up variants for staggered hero */
+.animate-fade-up-1 { animation: fadeUp 0.8s 0.1s ease-out both; }
+.animate-fade-up-2 { animation: fadeUp 0.8s 0.3s ease-out both; }
+.animate-fade-up-3 { animation: fadeUp 0.8s 0.5s ease-out both; }
+.animate-fade-up-4 { animation: fadeUp 0.8s 0.7s ease-out both; }
+
+/* Scroll-reveal cards (driven by IntersectionObserver) */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+[data-reveal].revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scroll-prompt fade-out on scroll */
+.scroll-prompt-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+/* ─────────────────────────────────────────────────────
+   Hybrid Hero (brutalist + spotlight)
+───────────────────────────────────────────────────── */
+.hero-display,
+.hero-outline,
+.hero-dash,
+.hero-name,
+.hero-dot {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(56px, 11.5vw, 152px);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 0.85;
+  display: inline-block;
+}
+.hero-outline {
+  color: transparent;
+  -webkit-text-stroke: 2px #fafafa;
+}
+.hero-dash,
+.hero-dot { color: #ff3b3b; }
+.hero-name  { color: #fafafa; }
